@@ -1,0 +1,30 @@
+{
+    "model": "mobilenetv2_mrl_eye",
+    "model_path": "deep_learning/mobilenetv2/mrl_eye/model/mobilenetv2_mrl_eye.keras",
+    "dataset": "MRL-Eye-Dataset",
+    "test_dir": "data/MRL-Eye-Dataset/test",
+    "classes": [
+        "awake",
+        "sleepy"
+    ],
+    "accuracy": 0.9852776632707143,
+    "precision": 0.993572641280621,
+    "recall": 0.9765196662693683,
+    "f1": 0.9849723491223852,
+    "confusion_matrix": [
+        [
+            8538,
+            53
+        ],
+        [
+            197,
+            8193
+        ]
+    ],
+    "tn": 8538,
+    "fp": 53,
+    "fn": 197,
+    "tp": 8193,
+    "far": 0.006169246886276336,
+    "frr": 0.023480333730631704
+}
