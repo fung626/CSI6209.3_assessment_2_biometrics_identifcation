@@ -49,6 +49,17 @@ Dataset:
 
 https://www.kaggle.com/datasets/akashshingha850/mrl-eye-dataset
 
+Use the **Driver Drowsiness Dataset** from Kaggle.
+
+The dataset will be used mainly to train a model that recognises:
+
+- Drowsy
+- Non Drowsy
+
+Dataset:
+
+https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd
+
 ---
 
 ## B. Computer Vision
@@ -59,12 +70,11 @@ Use computer vision to identify the driver's:
 - Eyes
 - Eye region
 
-Possible tools:
+Tools:
 
-- OpenCV
 - MediaPipe
 
-The purpose is to extract the relevant eye information from the live camera feed.
+The purpose is to extract the relevant eye and face information from the live camera feed.
 
 ---
 
@@ -233,47 +243,7 @@ If the system detects prolonged/repeated eye closure, trigger an alert.
 
 ---
 
-# 6. Simple Project Folder Structure
-
-For the initial project, you don't need a complicated structure.
-
-```text
-Driver-Drowsiness-Detection/
-│
-├── Dataset/
-│   └── MRL-Eye-Dataset/
-│
-├── Classical-ML/
-│   ├── EAR
-│   ├── SVM
-│   └── Random-Forest
-│
-├── Deep-Learning/
-│   ├── CNN
-│   └── MobileNetV2
-│
-├── Time-Series/
-│   ├── Eye-Closure
-│   └── PERCLOS
-│
-├── Real-Time/
-│   ├── Camera
-│   ├── Eye-Detection
-│   └── Alert-System
-│
-├── Results/
-│   ├── Graphs
-│   ├── Confusion-Matrix
-│   └── Model-Comparison
-│
-└── Documentation/
-    ├── Report
-    └── Presentation
-```
-
----
-
-# 7. What You Will Compare
+# 6. What You Will Compare
 
 Your project can have three main approaches:
 
@@ -287,7 +257,7 @@ This comparison will make the project more meaningful academically.
 
 ---
 
-# 8. How It Relates to Your Modules
+# 7. How It Relates to Your Modules
 
 ### Module 3 — Machine Learning / ANN / Deep Learning
 
@@ -324,7 +294,7 @@ This can be an **optional extension**, where you use a Genetic Algorithm to opti
 
 ---
 
-# 9. Expected Final Demo
+# 8. Expected Final Demo
 
 The final demonstration could look like:
 
@@ -353,13 +323,13 @@ Status:          DROWSY
 
 ---
 
-# 10. The Core Idea in One Sentence
+# 9. The Core Idea in One Sentence
 
 > **Develop a real-time computer vision system that classifies eye states using classical ML and deep learning, then analyses eye behaviour over time to distinguish normal blinking from potential driver drowsiness and trigger an alert.**
 
 ---
 
-# 11. Recommended Scope
+# 10. Recommended Scope
 
 For the **main project**, I would keep the scope to:
 
