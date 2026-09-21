@@ -1,4 +1,4 @@
-.DS_Store
+
 __pycache__/
 *.py[cod]
 *$py.class
@@ -11,11 +11,6 @@ ENV/
 
 data/
 datasets/
-models/*.pkl
-models/*.h5
-models/*.pt
-models/*.pth
-models/*.onnx
 *.ckpt
 .tensorboard/
 
