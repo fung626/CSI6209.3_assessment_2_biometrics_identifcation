@@ -6,6 +6,10 @@ sys.path.append(str(PROJECT_ROOT))
 
 from deep_learning.mobilenetv2.mobilenetv2 import MobileNetV2Trainer
 
+"""
+Train MobileNetV2 model for MRL-Eye dataset.
+"""
+
 trainer = MobileNetV2Trainer(
     data_dir=PROJECT_ROOT / "data" / "MRL-Eye-Dataset",
     model_path=(

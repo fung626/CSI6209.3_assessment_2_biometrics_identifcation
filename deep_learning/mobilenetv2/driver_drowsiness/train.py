@@ -2,9 +2,13 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.append(str(PROJECT_ROOT))
 
 from deep_learning.mobilenetv2.mobilenetv2 import MobileNetV2Trainer
+
+"""
+Train MobileNetV2 model for Driver Drowsiness dataset.
+"""
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 

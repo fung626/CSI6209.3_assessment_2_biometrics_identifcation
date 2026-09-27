@@ -1,14 +1,21 @@
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import pandas as pd
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # MobileNetV2 doc
 # https://www.tensorflow.org/api_docs/python/tf/keras/applications/MobileNetV2
+
+"""
+MobileNetV2 Trainer Class
+
+This class provides methods to load data, build a MobileNetV2 model,
+train the model, and export training results.
+"""
 
 
 class MobileNetV2Trainer:
@@ -24,6 +31,9 @@ class MobileNetV2Trainer:
         learning_rate=0.0001,
         trainable=True,
     ):
+        """
+        Initialize model attributes related to data, model, and training configuration.
+        """
         self.data_dir = Path(data_dir)
         self.results_dir = Path(results_dir)
         self.model_path = Path(model_path)
@@ -42,6 +52,9 @@ class MobileNetV2Trainer:
         self.test_dataset = None
 
     def load_data(self):
+        """
+        load all datasets (train, validation, test) from the specified data directory.
+        """
 
         train_dir = self.data_dir / "train"
         val_dir = self.data_dir / "val"
@@ -80,6 +93,9 @@ class MobileNetV2Trainer:
         self.test_dataset = self.test_dataset.prefetch(autotune)
 
     def build_model(self):
+        """
+        Build MobileNetV2 model with specified configuration.
+        """
 
         base_model = MobileNetV2(
             weights="imagenet",
@@ -128,6 +144,9 @@ class MobileNetV2Trainer:
         self.model.summary()
 
     def train(self):
+        """
+        Train MobileNetV2 model using the loaded datasets.
+        """
 
         self.history = self.model.fit(
             self.train_dataset,
@@ -138,6 +157,9 @@ class MobileNetV2Trainer:
         return self.history
 
     def export_training_results(self):
+        """
+        Export training results, including accuracy and loss plots, and save results to directory.
+        """
 
         if self.history is None:
             print("No training history available.")
@@ -186,6 +208,9 @@ class MobileNetV2Trainer:
         print("Training results exported successfully!")
 
     def evaluate(self):
+        """
+        Evaluate MobileNetV2 model on test dataset.
+        """
 
         test_loss, test_accuracy = self.model.evaluate(self.test_dataset)
 
@@ -195,6 +220,9 @@ class MobileNetV2Trainer:
         return test_loss, test_accuracy
 
     def save(self):
+        """
+        Save trained MobileNetV2 model to specified model path.
+        """
 
         self.model_path.parent.mkdir(parents=True, exist_ok=True)
 

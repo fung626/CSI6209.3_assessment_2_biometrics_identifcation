@@ -25,6 +25,7 @@ class EyePredictor:
 
         self.image_size = (MOBILENETV2_IMG_WIDTH, MOBILENETV2_IMG_HEIGHT)
 
+        # Print debug information if debug mode is enabled
         if self.debug:
             print("=" * 60)
             print("EyePredictor initialized")
@@ -37,6 +38,12 @@ class EyePredictor:
             print("=" * 60)
 
     def predict(self, eye):
+        """
+        Predict function for determining drowsiness of detected eye.
+        Returns:
+            label (str): Predicted label ("Awake" or "Sleepy").
+            confidence (float): Confidence score for the prediction.
+        """
 
         # Resize eye to model input size
         eye = cv2.resize(eye, self.image_size)
@@ -47,10 +54,11 @@ class EyePredictor:
         # Add batch dimension
         eye = np.expand_dims(eye, axis=0)
 
-        # Model prediction
+        # Get model prediction for the detected eye
         prediction = self.model.predict(eye, verbose=0)[0][0]
 
         # 0 = Awake 1 = Sleepy
+        # Set prediction threshold for Awake vs Sleepy
         if prediction >= 0.5:
             label = "Sleepy"
             confidence = prediction
@@ -58,6 +66,7 @@ class EyePredictor:
             label = "Awake"
             confidence = 1 - prediction
 
+        # Print debug information if debug mode is enabled
         if self.debug:
             print(
                 f"EyePredictor: "
@@ -69,7 +78,11 @@ class EyePredictor:
         return label, float(confidence)
 
     def draw_predictions(self, frame, eye_box):
+        """
+        Draw prediction label and confidence.
+        """
 
+        # Extract coordinates from eye bounding box
         x_min, y_min, x_max, y_max = eye_box
 
         # Crop eye from webcam frame
@@ -79,7 +92,9 @@ class EyePredictor:
         if eye.size == 0:
             return
 
+        # Print debug information if debug mode is enabled
         if self.debug:
+            # Show or save cropped eye for debugging purposes
             # cv2.imshow("Eye Input", eye)
             cv2.imwrite(
                 str(
@@ -91,7 +106,7 @@ class EyePredictor:
                 eye,
             )
 
-        # Predict
+        # Get label and confidence for the cropped eye
         label, confidence = self.predict(eye)
 
         # Draw bounding box
@@ -103,16 +118,18 @@ class EyePredictor:
             2,
         )
 
-        # Convert confidence to percentage
+        # Print debug information if debug mode is enabled
         if self.debug:
             print(
                 f"EyePredictor: Drawing prediction '{label}' "
                 f"with confidence {confidence * 100:.1f}% "
                 f"for eye box {eye_box}"
             )
+
+        # Text for displaying prediction on the frame
         text = f"{label}: {confidence * 100:.1f}%"
 
-        # Draw prediction
+        # Draw prediction text on the frame
         cv2.putText(
             frame,
             text,
@@ -124,6 +141,9 @@ class EyePredictor:
         )
 
     def extract_eye(self, frame, eye_box):
+        """
+        Extract and return eye region from frame using bounding box coordinates.
+        """
         x_min, y_min, x_max, y_max = eye_box
         eye = frame[y_min:y_max, x_min:x_max]
         return eye
