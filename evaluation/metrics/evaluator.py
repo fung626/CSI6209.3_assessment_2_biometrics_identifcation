@@ -20,15 +20,16 @@ def evaluate_model(
     Evaluate a TensorFlow classification model.
 
     Parameters:
-        model_path: Path to the trained model.
-        test_dir: Path to the test dataset.
-        image_size: Image size expected by the model.
+        model_path: Path to trained model.
+        test_dir: Path to test dataset.
+        image_size: Image size expected by model.
         batch_size: Batch size used for evaluation.
 
     Returns:
         Dictionary containing evaluation metrics.
     """
 
+    # # Initialize test dataset from specified directory, and config for evaluation
     test_dataset = tf.keras.utils.image_dataset_from_directory(
         test_dir,
         image_size=image_size,
@@ -37,11 +38,13 @@ def evaluate_model(
         shuffle=False,
     )
 
+    # Load trained model for evaluation
     model = tf.keras.models.load_model(model_path)
 
     all_labels = []
     all_preds = []
 
+    # Iterate through test dataset and collect predictions and labels
     for images, labels in test_dataset:
         probabilities = model.predict(images, verbose=0)
         preds = (probabilities >= 0.5).astype(int)
@@ -49,9 +52,12 @@ def evaluate_model(
         all_labels.extend(labels.numpy().flatten())
         all_preds.extend(preds.flatten())
 
+    # Get confusion matrix and evaluation metrics
     cm = confusion_matrix(all_labels, all_preds)
+    # Get true negatives, false positives, false negatives, and true positives from confusion matrix
     tn, fp, fn, tp = cm.ravel()
 
+    # Calculate accuracy, precision, recall, and F1 score
     accuracy = accuracy_score(all_labels, all_preds)
     precision = precision_score(
         all_labels,
@@ -69,12 +75,15 @@ def evaluate_model(
         zero_division=0,
     )
 
+    # Calculate false acceptance rate (FAR) and false rejection rate (FRR)
     far = fp / (fp + tn) if (fp + tn) > 0 else 0
     frr = fn / (fn + tp) if (fn + tp) > 0 else 0
 
+    # Prepare result path and ensure directory exists
     result_path = Path(result_path)
     result_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Save evaluation results
     results = {
         "model": Path(model_path).stem,
         "model_path": str(Path(model_path).relative_to(PROJECT_ROOT)),

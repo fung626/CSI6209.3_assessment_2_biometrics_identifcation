@@ -14,6 +14,9 @@ Face predictor for Driver Drowsiness dataset using a trained MobileNetV2 model.
 class FacePredictor:
 
     def __init__(self):
+        """
+        Initialize trained MobileNetV2 model.
+        """
         project_root = Path(__file__).resolve().parents[3]
 
         model_path = (
@@ -33,9 +36,13 @@ class FacePredictor:
     def predict(self, face):
         """
         Predict function for determining drowsiness of detected face.
+
+        Parameters:
+            face : Cropped face image to be evaluated.
+
         Returns:
-            label (str): Predicted label ("Drowsy" or "Non Drowsy").
-            confidence (float): Confidence score for the prediction.
+            label : Predicted label.
+            confidence : Confidence score for prediction.
         """
 
         # Resize face to model input size
@@ -73,6 +80,10 @@ class FacePredictor:
     def draw_prediction(self, frame, face_box):
         """
         Draw prediction label and confidence.
+
+        Parameters:
+            frame: Input image frame.
+            face_box: Bounding box coordinates for detected face.
         """
 
         # Extract coordinates from face bounding box
@@ -99,7 +110,7 @@ class FacePredictor:
                 face,
             )
 
-        # Get label and confidence for the cropped face
+        # Get label and confidence for cropped face
         label, confidence = self.predict(face)
 
         # Draw face bounding box
@@ -111,10 +122,10 @@ class FacePredictor:
             2,
         )
 
-        # Text for displaying prediction on the frame
+        # Text for displaying prediction
         text = f"{label}: {confidence * 100:.1f}%"
 
-        # Draw prediction text on the frame
+        # Draw prediction text
         cv2.putText(
             frame,
             text,

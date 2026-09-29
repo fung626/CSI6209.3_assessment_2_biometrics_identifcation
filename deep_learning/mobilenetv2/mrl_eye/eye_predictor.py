@@ -10,6 +10,9 @@ from config import COLOR_GREEN_BGR, DEBUG, MOBILENETV2_IMG_HEIGHT, MOBILENETV2_I
 class EyePredictor:
 
     def __init__(self):
+        """
+        Initialize trained MobileNetV2 model.
+        """
         project_root = Path(__file__).resolve().parents[3]
 
         model_path = (
@@ -40,9 +43,13 @@ class EyePredictor:
     def predict(self, eye):
         """
         Predict function for determining drowsiness of detected eye.
+
+        Parameters:
+            eye: Cropped eye image to be evaluated.
+
         Returns:
-            label (str): Predicted label ("Awake" or "Sleepy").
-            confidence (float): Confidence score for the prediction.
+            label : Predicted label.
+            confidence : Confidence score for prediction.
         """
 
         # Resize eye to model input size
@@ -54,7 +61,7 @@ class EyePredictor:
         # Add batch dimension
         eye = np.expand_dims(eye, axis=0)
 
-        # Get model prediction for the detected eye
+        # Get model prediction for detected eye
         prediction = self.model.predict(eye, verbose=0)[0][0]
 
         # 0 = Awake 1 = Sleepy
@@ -106,7 +113,7 @@ class EyePredictor:
                 eye,
             )
 
-        # Get label and confidence for the cropped eye
+        # Get label and confidence for cropped eye
         label, confidence = self.predict(eye)
 
         # Draw bounding box
@@ -126,10 +133,10 @@ class EyePredictor:
                 f"for eye box {eye_box}"
             )
 
-        # Text for displaying prediction on the frame
+        # Text for displaying prediction on frame
         text = f"{label}: {confidence * 100:.1f}%"
 
-        # Draw prediction text on the frame
+        # Draw prediction text on frame
         cv2.putText(
             frame,
             text,
@@ -143,6 +150,13 @@ class EyePredictor:
     def extract_eye(self, frame, eye_box):
         """
         Extract and return eye region from frame using bounding box coordinates.
+
+        Parameters:
+            frame: Input image frame.
+            eye_box: Bounding box coordinates for detected eye.
+
+        Returns:
+            eye : Cropped eye image.
         """
         x_min, y_min, x_max, y_max = eye_box
         eye = frame[y_min:y_max, x_min:x_max]

@@ -33,6 +33,16 @@ class MobileNetV2Trainer:
     ):
         """
         Initialize model attributes related to data, model, and training configuration.
+
+        Parameters:
+            data_dir: Path to dataset directory containing train, val, and test subdirectories.
+            model_path: Path to save trained model.
+            results_dir: Path to save training results.
+            image_size: Tuple specifying input image size for model.
+            batch_size: Batch size used for training and evaluation.
+            epochs: Number of training epochs.
+            learning_rate: Learning rate for optimizer.
+            trainable: Boolean indicating whether base MobileNetV2 layers are trainable.
         """
         self.data_dir = Path(data_dir)
         self.results_dir = Path(results_dir)
@@ -53,13 +63,14 @@ class MobileNetV2Trainer:
 
     def load_data(self):
         """
-        load all datasets (train, validation, test) from the specified data directory.
+        Load all datasets (train, validation, test) from the specified data directory.
         """
 
         train_dir = self.data_dir / "train"
         val_dir = self.data_dir / "val"
         test_dir = self.data_dir / "test"
 
+        # Initialize the train dataset
         self.train_dataset = tf.keras.utils.image_dataset_from_directory(
             train_dir,
             image_size=self.image_size,
@@ -68,6 +79,7 @@ class MobileNetV2Trainer:
             shuffle=True,
         )
 
+        # Initialize the validation dataset
         self.val_dataset = tf.keras.utils.image_dataset_from_directory(
             val_dir,
             image_size=self.image_size,
@@ -75,7 +87,7 @@ class MobileNetV2Trainer:
             label_mode="binary",
             shuffle=False,
         )
-
+        # Initialize the test dataset
         self.test_dataset = tf.keras.utils.image_dataset_from_directory(
             test_dir,
             image_size=self.image_size,
@@ -96,7 +108,7 @@ class MobileNetV2Trainer:
         """
         Build MobileNetV2 model with specified configuration.
         """
-
+        # Load the base MobileNetV2 model with pre-trained ImageNet weights
         base_model = MobileNetV2(
             weights="imagenet",
             include_top=False,
@@ -174,6 +186,8 @@ class MobileNetV2Trainer:
         history_df.index.name = "epoch"
 
         history_df.to_csv(self.results_dir / "training_history.csv")
+
+        # Plot and save training and validation accuracy and loss graphs
 
         plt.figure()
 

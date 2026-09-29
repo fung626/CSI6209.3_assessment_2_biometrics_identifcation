@@ -8,11 +8,26 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_results(result_path):
+    """
+    Load JSON results
+
+    Parameters:
+        result_path: Path to JSON file containing model evaluation results.
+
+    Returns:
+        A dictionary containing loaded results.
+    """
     with open(result_path, "r") as file:
         return json.load(file)
 
 
 def compare_models(result_paths):
+    """
+    Compare multiple models based on evaluation results.
+
+    Parameters:
+        result_paths: List of paths to JSON files containing model evaluation results.
+    """
     results = [load_results(path) for path in result_paths]
 
     model_names = [result["model"] for result in results]
