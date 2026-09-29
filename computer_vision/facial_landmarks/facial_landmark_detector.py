@@ -6,10 +6,20 @@ import numpy as np
 
 from config import COLOR_GREEN_BGR, COLOR_RED_BGR
 
+"""
+FacialLandmarkDetector class for detecting and drawing facial landmarks using MediaPipe.
+"""
+
+# MediaPipe
+# https://google-ai-edge.github.io/mediapipe-samples-web/#/vision/face_landmarker
+
 
 class FacialLandmarkDetector:
 
     def __init__(self):
+        """
+        Initialize FacialLandmarkDetector for detecting facial landmarks using MediaPipe.
+        """
         project_root = Path(__file__).resolve().parents[2]
 
         model_path = (
@@ -36,12 +46,23 @@ class FacialLandmarkDetector:
         self.timestamp_ms = 0
 
     def detect(self, frame):
+        """
+        Detect facial landmarks in given frame.
+
+        Parameters:
+            frame: Input image frame.
+
+        Returns:
+            Detected facial landmarks or None if no face is detected.
+        """
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
 
+        # Increment the timestamp for video frame processing
         self.timestamp_ms += 33
 
+        # Get results for the current video frame
         result = self.landmarker.detect_for_video(mp_image, self.timestamp_ms)
 
         if not result.face_landmarks:
@@ -50,6 +71,13 @@ class FacialLandmarkDetector:
         return result.face_landmarks[0]
 
     def draw_landmarks(self, frame, landmarks):
+        """
+        Draw facial landmarks on given frame.
+
+        Parameters:
+            frame: Input image frame.
+            landmarks: List of facial landmarks.
+        """
         if landmarks is None:
             return
 
@@ -63,6 +91,15 @@ class FacialLandmarkDetector:
             cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
 
     def draw_indicator(self, frame, landmarks, label=None, is_alert=False):
+        """
+        Draw indicator around detected facial landmarks.
+
+        Parameters:
+            frame: Input image frame.
+            landmarks: List of facial landmarks.
+            label: Optional label to display above bounding box.
+            is_alert: Boolean flag indicating if indicator should be red or green.
+        """
         if landmarks is None or len(landmarks) == 0:
             return
 
@@ -107,7 +144,15 @@ class FacialLandmarkDetector:
             )
 
     def get_mar(self, face_landmarks):
-        # To calculate the Mouth Aspect Ratio (MAR) for yawning detection
+        """
+        Calculate Mouth Aspect Ratio (MAR) for yawning detection.
+
+        Parameters:
+            face_landmarks: List of facial landmarks.
+
+        Returns:
+            Calculated MAR value.
+        """
 
         if face_landmarks is None:
             return 0.0
@@ -141,6 +186,16 @@ class FacialLandmarkDetector:
         return float(mar)
 
     def get_face_box(self, frame, landmarks):
+        """
+        Get bounding box around detected facial landmarks.
+
+        Parameters:
+            frame: The input image frame.
+            landmarks: List of facial landmarks.
+
+        Returns:
+            A tuple (x_min, y_min, x_max, y_max) representing bounding box coordinates.
+        """
         if landmarks is None:
             return None
 
@@ -162,7 +217,6 @@ class FacialLandmarkDetector:
         y_min = min(y_coordinates)
         y_max = max(y_coordinates)
 
-        # Keep the bounding box inside the frame
         x_min = max(x_min, 0)
         y_min = max(y_min, 0)
         x_max = min(x_max, width)
