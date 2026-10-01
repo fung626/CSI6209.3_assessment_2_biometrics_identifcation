@@ -11,6 +11,7 @@ ENV/
 
 data/
 datasets/
+results/debug/
 *.ckpt
 .tensorboard/
 
