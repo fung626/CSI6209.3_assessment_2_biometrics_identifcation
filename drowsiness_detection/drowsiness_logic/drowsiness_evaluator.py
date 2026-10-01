@@ -1,8 +1,26 @@
+from pathlib import Path
+
 import cv2
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 
-from config import COLOR_RED_BGR, DEBUG
-from utils.drawing_utils import draw_bold_text, draw_regular_text, draw_semibold_text
+from config import (
+    COLOR_BROWN_RGB,
+    COLOR_DARK_GRAY_RGB,
+    COLOR_DARK_RED_RGB,
+    COLOR_GRAY_RGB,
+    COLOR_LIGHT_GREEN_RGB,
+    COLOR_LIGHT_ORANGE_RGB,
+    COLOR_LIGHT_RED_RGB,
+    COLOR_LIGHT_YELLOW_RGB,
+    COLOR_OLIVE_RGB,
+    COLOR_WHITE_RGB,
+    DEBUG,
+)
+
+# from utils.drawing_utils import draw_bold_text, draw_regular_text, draw_semibold_text
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 """
 The class for evaluating driver drowsiness based on face, eye, and yawn inputs.
@@ -40,7 +58,7 @@ class DrowsinessEvaluator:
                 is_yawning: Boolean indicating if driver is yawning.
                 are_eyes_closed: Boolean indicating if driver's eyes are closed.
 
-        returns:
+        Returns:
                 final_drowsy_score: Computed final drowsiness score.
                 is_drowsy: Boolean indicating if driver is considered drowsy.
         """
@@ -79,87 +97,202 @@ class DrowsinessEvaluator:
         is_drowsy = final_drowsy_score > self.threshold
         return final_drowsy_score, is_drowsy
 
-    def draw_status(self, frame, final_score, is_drowsy, is_yawning, are_eyes_closed):
+    def draw_status(
+        self,
+        frame,
+        is_face_detected=False,
+        final_score=0.0,
+        is_drowsy=False,
+        is_yawning=False,
+        are_eyes_closed=False,
+        perclos=0.0,
+    ):
         """
-        Draw status overlay indicating drowsiness and yawning.
-
-        Parameters:
-            frame: Input image frame.
-            final_score: Final drowsiness score.
-            is_drowsy: Boolean indicating if driver is considered drowsy.
-            is_yawning: Boolean indicating if driver is yawning.
-            are_eyes_closed: Boolean indicating if driver's eyes are closed.
-
+        Draw status card on the top-right corner
         """
 
-        # Get frame dimensions
-        height, width, _ = frame.shape
+        # print(
+        #     f"Draw Status -> Face Detected: {is_face_detected} | Final Score: {final_score:.2f} | Drowsy: {is_drowsy} | Yawning: {is_yawning} | Eyes Closed: {are_eyes_closed} | PERCLOS: {perclos:.1f}%"
+        # )
 
-        # Define bounding box coordinates for status overlay
-        box_x1, box_y1 = 15, 15
-        box_x2, box_y2 = 285, 120
+        try:
+            _, width, _ = frame.shape
 
-        # Determine background and border colors based on drowsiness status
-        bg_color = COLOR_RED_BGR if is_drowsy else (40, 40, 40)  # BGR
-        border_color = (0, 0, 255) if is_drowsy else (0, 255, 0)  # BGR
+            w = 260
+            h = 100
+            x = width - w - 25
+            y = 25
+            corner_radius = 16
 
-        # Draw status overlay box with background and border
-        cv2.rectangle(frame, (box_x1, box_y1), (box_x2, box_y2), bg_color, -1)  # Filled
-        cv2.rectangle(frame, (box_x1, box_y1), (box_x2, box_y2), border_color, 2)
-
-        # Setup all status text strings
-        status_text = "STATUS: DROWSY" if is_drowsy else "STATUS: AWAKE"
-        score_text = f"Score: {final_score:.2f}"
-        yawn_text = "YAWN DETECTED!" if is_yawning else "Normal"
-        eye_text = "EYES CLOSED!" if are_eyes_closed else "Eyes Active"
-
-        # Draw status text on overlay box
-        frame = draw_bold_text(
-            frame,
-            "DRIVER MONITORING",
-            (25, 22),
-            font_size=14,
-            color_bgr=(255, 255, 255),
-        )
-        frame = draw_semibold_text(
-            frame, status_text, (25, 48), font_size=18, color_bgr=(255, 255, 255)
-        )
-        frame = draw_regular_text(
-            frame, score_text, (25, 76), font_size=14, color_bgr=(200, 200, 200)
-        )
-        frame = draw_regular_text(
-            frame,
-            yawn_text,
-            (25, 96),
-            font_size=12,
-            color_bgr=(0, 255, 255) if is_yawning else (180, 180, 180),
-        )
-        frame = draw_regular_text(
-            frame,
-            eye_text,
-            (145, 96),
-            font_size=12,
-            color_bgr=(0, 0, 255) if are_eyes_closed else (180, 180, 180),
-        )
-
-        # Draw warning box and text if drowsy detected
-        if is_drowsy:
-            warning_box_y1 = height - 80
-            warning_box_y2 = height - 20
-            cv2.rectangle(
-                frame,
-                (50, warning_box_y1),
-                (width - 50, warning_box_y2),
-                COLOR_RED_BGR,
-                -1,
+            bg_color_rgb = (24, 24, 24)
+            border_line_color = (
+                60,
+                60,
+                60,
             )
-            frame = draw_bold_text(
-                frame,
-                "*** WARNING: WAKE UP! ***",
-                (width // 2 - 140, height - 55),
-                font_size=20,
-                color_bgr=(255, 255, 255),
+            text_muted_rgb = COLOR_GRAY_RGB
+            text_white_rgb = COLOR_WHITE_RGB
+            green_accent_rgb = COLOR_LIGHT_GREEN_RGB
+            alert_red_rgb = COLOR_LIGHT_RED_RGB
+
+            if is_face_detected == False:
+                risk_label = "NONE"
+                badge_bg = COLOR_DARK_GRAY_RGB
+                badge_width = 70
+                badge_text_color = COLOR_WHITE_RGB
+            elif is_drowsy or final_score >= 0.7:
+                risk_label = "HIGH"
+                badge_bg = COLOR_DARK_RED_RGB
+                badge_width = 52
+                badge_text_color = COLOR_WHITE_RGB
+            elif final_score >= 0.3:
+                risk_label = "MED"
+                badge_bg = COLOR_LIGHT_ORANGE_RGB
+                badge_width = 50
+                badge_text_color = COLOR_BROWN_RGB
+            else:
+                risk_label = "LOW"
+                badge_bg = COLOR_LIGHT_YELLOW_RGB
+                badge_width = 50
+                badge_text_color = COLOR_OLIVE_RGB
+
+            img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            pil_img = Image.fromarray(img_rgb)
+            draw = ImageDraw.Draw(pil_img)
+
+            draw.rounded_rectangle(
+                [(x, y), (x + w, y + h)],
+                radius=corner_radius,
+                fill=bg_color_rgb,
             )
+
+            font_semi_path = (
+                PROJECT_ROOT / "assets" / "fonts" / "SF-Pro-Display-Semibold.ttf"
+            )
+            font_bold_path = (
+                PROJECT_ROOT / "assets" / "fonts" / "SF-Pro-Display-Bold.ttf"
+            )
+
+            try:
+                font_header_label = ImageFont.truetype(str(font_semi_path), 14)
+                font_badge = ImageFont.truetype(str(font_bold_path), 14)
+                font_col_label = ImageFont.truetype(str(font_semi_path), 12)
+                font_col_val = ImageFont.truetype(str(font_bold_path), 12)
+            except Exception:
+                font_header_label = font_badge = font_col_label = font_col_val = (
+                    ImageFont.load_default()
+                )
+
+            header_height = 38
+            header_bottom_y = y + header_height
+            draw.line(
+                [(x, header_bottom_y), (x + w, header_bottom_y)],
+                fill=border_line_color,
+                width=1,
+            )
+
+            draw.text(
+                (x + 12, y + 12),
+                "DROWSINESS LEVEL",
+                font=font_header_label,
+                fill=text_muted_rgb,
+            )
+
+            badge_w, badge_h = badge_width, 18
+            badge_x = x + w - badge_w - 10
+            badge_y = y + 10
+            draw.rounded_rectangle(
+                [(badge_x, badge_y), (badge_x + badge_w, badge_y + badge_h)],
+                radius=8,
+                fill=badge_bg,
+            )
+            bbox = draw.textbbox((0, 0), risk_label, font=font_badge)
+            bx = badge_x + (badge_w - (bbox[2] - bbox[0])) // 2 - bbox[0]
+            by = badge_y + (badge_h - (bbox[3] - bbox[1])) // 2 - bbox[1]
+            draw.text((bx, by), risk_label, font=font_badge, fill=badge_text_color)
+
+            # ==========================================
+            # 3-COLUMN GRID SECTION (Yawn | Eyes | PERCLOS)
+            # ==========================================
+            col_w = w // 3
+            grid_top_y = header_bottom_y + 4
+
+            draw.line(
+                [(x + col_w, grid_top_y), (x + col_w, y + h - 6)],
+                fill=border_line_color,
+                width=1,
+            )
+            draw.line(
+                [(x + 2 * col_w, grid_top_y), (x + 2 * col_w, y + h - 6)],
+                fill=border_line_color,
+                width=1,
+            )
+
+            yawn_val = "N/A" if not is_face_detected else "YES" if is_yawning else "NO"
+            yawn_color = (
+                alert_red_rgb
+                if is_yawning
+                else green_accent_rgb if is_face_detected else text_muted_rgb
+            )
+
+            eyes_val = (
+                "N/A"
+                if not is_face_detected
+                else "CLOSED" if are_eyes_closed else "OPEN"
+            )
+            eyes_color = (
+                alert_red_rgb
+                if are_eyes_closed
+                else green_accent_rgb if is_face_detected else text_muted_rgb
+            )
+
+            perclos_val = "N/A" if not is_face_detected else f"{perclos:.1f}%"
+            perclos_color = (
+                alert_red_rgb
+                if perclos > 50
+                else text_white_rgb if is_face_detected else text_muted_rgb
+            )
+
+            columns = [
+                ("YAWN", yawn_val, yawn_color),
+                ("EYES", eyes_val, eyes_color),
+                ("PERCLOS", perclos_val, perclos_color),
+            ]
+
+            # Render each column
+            for i, (col_label, col_val, val_color) in enumerate(columns):
+                c_start_x = x + i * col_w
+                try:
+                    lbl_bbox = draw.textbbox((0, 0), col_label, font=font_col_label)
+                    lbl_w = lbl_bbox[2] - lbl_bbox[0]
+                    lbl_x = c_start_x + (col_w - lbl_w) // 2 - lbl_bbox[0]
+                except Exception:
+                    lbl_x = c_start_x + 12
+
+                draw.text(
+                    (lbl_x, grid_top_y + 6),
+                    col_label,
+                    font=font_col_label,
+                    fill=text_muted_rgb,
+                )
+
+                try:
+                    val_bbox = draw.textbbox((0, 0), col_val, font=font_col_val)
+                    val_w = val_bbox[2] - val_bbox[0]
+                    val_x = c_start_x + (col_w - val_w) // 2 - val_bbox[0]
+                except Exception:
+                    val_x = c_start_x + 12
+
+                draw.text(
+                    (val_x, grid_top_y + 22),
+                    col_val,
+                    font=font_col_val,
+                    fill=val_color,
+                )
+            return cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
+        except Exception as e:
+            if self.debug:
+                print(f"Error drawing risk badge: {e}")
 
         return frame
 

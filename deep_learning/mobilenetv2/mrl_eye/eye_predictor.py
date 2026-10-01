@@ -74,13 +74,13 @@ class EyePredictor:
             confidence = 1 - prediction
 
         # Print debug information if debug mode is enabled
-        if self.debug:
-            print(
-                f"EyePredictor: "
-                f"Raw eye drowsiness label is {label} "
-                f"with confidence {confidence * 100:.1f}% "
-                f"and prediction {prediction}"
-            )
+        # if self.debug:
+        #     print(
+        #         f"EyePredictor: "
+        #         f"Raw eye drowsiness label is {label} "
+        #         f"with confidence {confidence * 100:.1f}% "
+        #         f"and prediction {prediction}"
+        #     )
 
         return label, float(confidence)
 

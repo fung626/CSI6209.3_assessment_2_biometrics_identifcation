@@ -12,9 +12,24 @@ FacialLandmarkDetector class for detecting and drawing facial landmarks using Me
 
 # MediaPipe
 # https://google-ai-edge.github.io/mediapipe-samples-web/#/vision/face_landmarker
+# Code Example Reference
+# https://learnopencv.com/driver-drowsiness-detection-using-mediapipe-in-python/
+# https://medium.com/@rajarshi023/real-time-mental-fatigue-detection-using-computer-vision-and-mediapipe-21f0e1a37dd3
+# https://medium.com/@Mert.A/detect-eyes-nose-and-mouth-with-mediapipe-bbfdf7a61f21
 
 
 class FacialLandmarkDetector:
+
+    # Index positions in mouth_indices:
+    # 0: 61  (Left outer corner)
+    # 1: 291 (Right outer corner)
+    # 2: 0   (Outer upper lip)
+    # 3: 17  (Outer lower lip)
+    # 4: 78  (Left inner corner)
+    # 5: 308 (Right inner corner)
+    # 6: 13  (Inner upper lip)
+    # 7: 14  (Inner lower lip)
+    MOUTH_INDICES = [61, 291, 0, 17, 78, 308, 13, 14]
 
     def __init__(self):
         """
@@ -163,7 +178,7 @@ class FacialLandmarkDetector:
             else face_landmarks
         )
 
-        if not landmarks or len(landmarks) <= max(61, 291, 13, 14, 12, 15, 17):
+        if not landmarks or len(landmarks) <= max(self.MOUTH_INDICES):
             return 0.0
 
         def pt(idx):

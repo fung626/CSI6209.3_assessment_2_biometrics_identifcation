@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+from utils.drawing_utils import draw_live_badge, draw_timestamp_badge
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -55,19 +57,27 @@ def main():
                 print("Error: Cannot read webcam frame")
                 break
 
+            is_face_detected = False
             face_landmarks = face_detector.detect(frame)
+            final_score = 0.0
+            is_drowsy = False
+            is_yawning = False
+            are_eyes_closed = False
+            perclos = 0.0
+            duration_threshold = 2.0
 
             if face_landmarks is not None:
+                is_face_detected = True
                 # Draw face bounding box
                 face_box = face_detector.get_face_box(frame, face_landmarks)
                 mar_score = face_detector.get_mar(face_landmarks)
 
                 face_detector.draw_indicator(frame, face_landmarks)
 
-                # https://medium.com/@Mert.A/detect-eyes-nose-and-mouth-with-mediapipe-bbfdf7a61f21
-                mouth_indices = [61, 291, 0, 17, 78, 308, 13, 14]
                 mouth_landmarks = [
-                    face_landmarks[i] for i in mouth_indices if i < len(face_landmarks)
+                    face_landmarks[i]
+                    for i in FacialLandmarkDetector.MOUTH_INDICES
+                    if i < len(face_landmarks)
                 ]
 
                 is_yawning = mar_score > 0.5
@@ -125,13 +135,22 @@ def main():
                 )
 
                 print(
-                    f"Final Score: {final_score:.2f} | Is Drowsy: {is_drowsy} | Is Yawning: {is_yawning} | Are Eyes Closed: {are_eyes_closed}"
-                )
-
-                frame = evaluator.draw_status(
-                    frame, final_score, is_drowsy, is_yawning, are_eyes_closed
+                    f"Final Score: {final_score:.2f} | Is Drowsy: {is_drowsy} | Is Yawning: {is_yawning} | Yawn Duration: {yawn_duration} | Are Eyes Closed: {are_eyes_closed} | Closure Duration: {closure_duration}"
                 )
                 buzzer_alert.trigger(is_drowsy)
+
+            frame = evaluator.draw_status(
+                frame,
+                is_face_detected=is_face_detected,
+                final_score=final_score,
+                is_drowsy=is_drowsy,
+                is_yawning=is_yawning and yawn_duration > duration_threshold,
+                are_eyes_closed=are_eyes_closed
+                and closure_duration > duration_threshold,
+                perclos=perclos,
+            )
+            frame = draw_timestamp_badge(frame)
+            frame = draw_live_badge(frame)
 
             cv2.imshow("Driver Drowsiness Detection", frame)
 

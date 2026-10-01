@@ -8,50 +8,18 @@ EyeDetector class for detecting and cropping eyes from a given image frame based
 # MediaPipe
 # https://google-ai-edge.github.io/mediapipe-samples-web/#/vision/face_landmarker
 # Code Example Reference
+# https://learnopencv.com/driver-drowsiness-detection-using-mediapipe-in-python/
 # https://medium.com/@asadullahdal/iris-segmentation-mediapipe-python-a4deb711aae3
+# https://medium.com/@sabarishds03/pupil-patrol-building-live-eye-tracking-with-mediapipe-facemesh-88210bbca3f1
 # https://github.com/Pushtogithub23/Eye-Blink-Detection-using-MediaPipe-and-OpenCV
 
 
 class EyeDetector:
 
     # MediaPipe left and right eye landmark index
-    LEFT_EYE = [
-        362,
-        382,
-        381,
-        380,
-        374,
-        373,
-        390,
-        249,
-        263,
-        466,
-        388,
-        387,
-        386,
-        385,
-        384,
-        398,
-    ]
+    LEFT_EYE = [33, 160, 158, 133, 153, 144]
 
-    RIGHT_EYE = [
-        33,
-        7,
-        163,
-        144,
-        145,
-        153,
-        154,
-        155,
-        133,
-        173,
-        157,
-        158,
-        159,
-        160,
-        161,
-        246,
-    ]
+    RIGHT_EYE = [362, 385, 387, 263, 373, 380]
 
     def __init__(self, padding=30):
         """
@@ -152,7 +120,7 @@ class EyeDetector:
                 2,
             )
 
-    def get_ear(self, eye_landmarks, landmarks):
+    def get_ear(self, eye_landmarks, landmarks, frame=None):
         """
         Calculate Eye Aspect Ratio (EAR) for detected eye.
 
@@ -164,36 +132,34 @@ class EyeDetector:
             EAR value as a float. Returns 0.0 if calculation fails.
         """
 
-        print(f"EyeDetector: Eye landmarks: {eye_landmarks}")
-        print(f"EyeDetector: Landmarks: {landmarks}")
-
-        try:
-            # Normalize and convert eye landmarks to numpy array
-            pts = []
-            for idx in eye_landmarks:
-                pt = landmarks[idx]
-                if hasattr(pt, "x") and hasattr(pt, "y"):
-                    pts.append([pt.x, pt.y])
-                else:
-                    pts.append([pt[0], pt[1]])
-
-            pts = np.array(pts, dtype=np.float32)
-            # upper and lower eyelids
-            A = np.linalg.norm(pts[1] - pts[5])
-            # second pair of upper and lower eyelids
-            B = np.linalg.norm(pts[2] - pts[4])
-            # outer corner to inner corner
-            C = np.linalg.norm(pts[0] - pts[3])
-            if C == 0.0:
-                return 0.0
-            # A and B measure vertical distances between eyelids
-            # C measures horizontal distance between eye corners
-            # Formula for Eye Aspect Ratio (EAR)
-            ar = (A + B) / (2.0 * C)
-            return float(ar)
-        except Exception as e:
-            print(f"EyeDetector: EAR calculation warning: {e}")
+        if landmarks is None:
             return 0.0
+
+        pts = []
+        if frame is not None:
+            height, width, _ = frame.shape
+            for index in eye_landmarks:
+                landmark = landmarks[index]
+                pts.append(np.array([landmark.x * width, landmark.y * height]))
+        else:
+            for index in eye_landmarks:
+                landmark = landmarks[index]
+                pts.append(np.array([landmark.x, landmark.y]))
+
+        pts = np.array(pts)
+
+        # Vertical distances
+        v1 = np.linalg.norm(pts[1] - pts[5])
+        v2 = np.linalg.norm(pts[2] - pts[4])
+
+        # Horizontal distance
+        h = np.linalg.norm(pts[0] - pts[3])
+
+        if h == 0:
+            return 0.0
+
+        ear = (v1 + v2) / (2.0 * h)
+        return ear
 
     def crop_eyes(self, frame, eye_boxes):
         """

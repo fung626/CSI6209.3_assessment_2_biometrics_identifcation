@@ -85,7 +85,7 @@ class EyeClosureDetector:
         print(f"Left EAR: {left_ear_score:.3f}, Right EAR: {right_ear_score:.3f}")
 
         avg_ear = (left_ear_score + right_ear_score) / 2.0
-        eyes_are_closed = avg_ear < 0.22
+        eyes_are_closed = avg_ear < 0.20
 
         print(f"Avg EAR: {avg_ear:.3f}, Eyes are closed: {eyes_are_closed}")
 
