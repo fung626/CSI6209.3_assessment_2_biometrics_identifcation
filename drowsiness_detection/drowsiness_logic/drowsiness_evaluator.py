@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 from config import COLOR_RED_BGR, DEBUG
+from utils.drawing_utils import draw_bold_text, draw_regular_text, draw_semibold_text
 
 """
 The class for evaluating driver drowsiness based on face, eye, and yawn inputs.
@@ -11,16 +12,23 @@ The class for evaluating driver drowsiness based on face, eye, and yawn inputs.
 class DrowsinessEvaluator:
 
     def __init__(
-        self, face_weight=0.3, eye_weight=0.7, threshold=0.55, yawn_threshold=0.5
+        self,
+        face_weight=0.3,
+        eye_weight=0.7,
+        threshold=0.55,
     ):
         self.w_face = face_weight
         self.w_eye = eye_weight
         self.threshold = threshold
-        self.yawn_threshold = yawn_threshold
         self.debug = DEBUG
 
     def evaluate(
-        self, raw_face_pred, left_eye_pred=None, right_eye_pred=None, mar_score=0.0
+        self,
+        raw_face_pred,
+        left_eye_pred=None,
+        right_eye_pred=None,
+        is_yawning=False,
+        are_eyes_closed=False,
     ):
         """
         Evaluate function for computing final drowsiness score based on face, eye, and yawn inputs.
@@ -29,11 +37,12 @@ class DrowsinessEvaluator:
                 raw_face_pred: Raw prediction output from face drowsiness model.
                 left_eye_pred: Raw prediction output from left eye drowsiness model.
                 right_eye_pred: Raw prediction output from right eye drowsiness model.
-                mar_score: Mouth aspect ratio score for yawn detection.
+                is_yawning: Boolean indicating if driver is yawning.
+                are_eyes_closed: Boolean indicating if driver's eyes are closed.
 
         returns:
                 final_drowsy_score: Computed final drowsiness score.
-                is_drowsy: Boolean indicating if the driver is considered drowsy.
+                is_drowsy: Boolean indicating if driver is considered drowsy.
         """
 
         # Parse face prediction to obtain drowsiness score
@@ -55,10 +64,10 @@ class DrowsinessEvaluator:
             eye_score * self.w_eye
         )
 
-        # If driver is yawning, force a high drowsiness score
-        is_yawning = mar_score > self.yawn_threshold
         if is_yawning:
             final_drowsy_score = max(final_drowsy_score, 0.95)
+        if are_eyes_closed:
+            final_drowsy_score = max(final_drowsy_score, 0.98)
 
         # Print debug information if debug mode is enabled
         if self.debug:
@@ -70,7 +79,7 @@ class DrowsinessEvaluator:
         is_drowsy = final_drowsy_score > self.threshold
         return final_drowsy_score, is_drowsy
 
-    def draw_status(self, frame, final_score, is_drowsy, is_yawning):
+    def draw_status(self, frame, final_score, is_drowsy, is_yawning, are_eyes_closed):
         """
         Draw status overlay indicating drowsiness and yawning.
 
@@ -79,6 +88,8 @@ class DrowsinessEvaluator:
             final_score: Final drowsiness score.
             is_drowsy: Boolean indicating if driver is considered drowsy.
             is_yawning: Boolean indicating if driver is yawning.
+            are_eyes_closed: Boolean indicating if driver's eyes are closed.
+
         """
 
         # Get frame dimensions
@@ -99,44 +110,36 @@ class DrowsinessEvaluator:
         # Setup all status text strings
         status_text = "STATUS: DROWSY" if is_drowsy else "STATUS: AWAKE"
         score_text = f"Score: {final_score:.2f}"
-        yawn_alert_text = "YAWN DETECTED!" if is_yawning else "Normal"
+        yawn_text = "YAWN DETECTED!" if is_yawning else "Normal"
+        eye_text = "EYES CLOSED!" if are_eyes_closed else "Eyes Active"
 
         # Draw status text on overlay box
-        cv2.putText(
+        frame = draw_bold_text(
             frame,
-            "DRIVER MONITORING SYSTEM",
-            (25, 35),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (255, 255, 255),
-            1,
+            "DRIVER MONITORING",
+            (25, 22),
+            font_size=14,
+            color_bgr=(255, 255, 255),
         )
-        cv2.putText(
-            frame,
-            status_text,
-            (25, 60),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.6,
-            (255, 255, 255),
-            2,
+        frame = draw_semibold_text(
+            frame, status_text, (25, 48), font_size=18, color_bgr=(255, 255, 255)
         )
-        cv2.putText(
-            frame,
-            score_text,
-            (25, 85),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (200, 200, 200),
-            1,
+        frame = draw_regular_text(
+            frame, score_text, (25, 76), font_size=14, color_bgr=(200, 200, 200)
         )
-        cv2.putText(
+        frame = draw_regular_text(
             frame,
-            yawn_alert_text,
-            (25, 108),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (0, 255, 255) if is_yawning else (150, 150, 150),
-            1,
+            yawn_text,
+            (25, 96),
+            font_size=12,
+            color_bgr=(0, 255, 255) if is_yawning else (180, 180, 180),
+        )
+        frame = draw_regular_text(
+            frame,
+            eye_text,
+            (145, 96),
+            font_size=12,
+            color_bgr=(0, 0, 255) if are_eyes_closed else (180, 180, 180),
         )
 
         # Draw warning box and text if drowsy detected
@@ -150,15 +153,15 @@ class DrowsinessEvaluator:
                 COLOR_RED_BGR,
                 -1,
             )
-            cv2.putText(
+            frame = draw_bold_text(
                 frame,
                 "*** WARNING: WAKE UP! ***",
-                (width // 2 - 180, height - 42),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
-                (255, 255, 255),
-                2,
+                (width // 2 - 140, height - 55),
+                font_size=20,
+                color_bgr=(255, 255, 255),
             )
+
+        return frame
 
     def _parse_drowsiness_score(self, raw_pred):
         """
