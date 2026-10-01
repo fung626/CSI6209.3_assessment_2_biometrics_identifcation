@@ -26,29 +26,29 @@ Awake / Drowsy Status & Real-Time Alert
 
 ## A. Dataset
 
-### [MRL Eye Dataset](https://www.kaggle.com/datasets/akashshingha850/mrl-eye-dataset): Used to train and evaluate eye-state classification models (Open vs. Closed eyes).
+#### [MRL Eye Dataset](https://www.kaggle.com/datasets/akashshingha850/mrl-eye-dataset): Used to train and evaluate eye-state classification models (Open vs. Closed eyes).
 
-### [Driver Drowsiness Dataset (DDD)](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd): Used for broader driver fatigue state validation (Drowsy vs. Non-Drowsy).
+#### [Driver Drowsiness Dataset (DDD)](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd): Used for broader driver fatigue state validation (Drowsy vs. Non-Drowsy).
 
 ## B. Computer Vision & Feature Extraction
 
-### [MediaPipe](https://github.com/google-ai-edge/mediapipe): Powers high-performance face mesh tracking to extract precise coordinates for eyes and mouth in real-time.
+#### [MediaPipe](https://github.com/google-ai-edge/mediapipe): Powers high-performance face mesh tracking to extract precise coordinates for eyes and mouth in real-time.
 
-### Geometric Metrics: Calculates Eye Aspect Ratio (EAR) and Mouth Aspect Ratio (MAR) to capture instantaneous blink and yawn behaviors.
+#### Geometric Metrics: Calculates Eye Aspect Ratio (EAR) and Mouth Aspect Ratio (MAR) to capture instantaneous blink and yawn behaviors.
 
 ## C. Deep Learning & Unified Models
 
-### [MobileNetV2](https://www.sciencedirect.com/topics/computer-science/mobilenetv2) / CNN: Lightweight convolutional neural networks optimized for fast image classification on eye regions.
+#### [MobileNetV2](https://www.sciencedirect.com/topics/computer-science/mobilenetv2) / CNN: Lightweight convolutional neural networks optimized for fast image classification on eye regions.
 
-### Unified Decision Pipeline: Combines deterministic geometric thresholds with trained model inferences into a single, robust scoring pipeline to minimize false positives caused by head movement or lighting variations.
+#### Unified Decision Pipeline: Combines deterministic geometric thresholds with trained model inferences into a single, robust scoring pipeline to minimize false positives caused by head movement or lighting variations.
 
 ## D. Time-Series & Temporal Analysis
 
-### PERCLOS (Percentage of Eye Closure): Measures the proportion of time eyes remain closed over a sliding time window.
+#### PERCLOS (Percentage of Eye Closure): Measures the proportion of time eyes remain closed over a sliding time window.
 
-### Consecutive Closed Frames: Tracks prolonged micro-sleeps.
+#### Consecutive Closed Frames: Tracks prolonged micro-sleeps.
 
-### Yawn Frequency: Integrates mouth state tracking via MAR to reinforce fatigue detection.
+#### Yawn Frequency: Integrates mouth state tracking via MAR to reinforce fatigue detection.
 
 ---
 
