@@ -61,13 +61,6 @@ CSI6209.3_assessment_2_biometrics_identifcation/
 │           └── model/
 │               └── mobilenetv2_mrl_eye.keras
 │
-├── time_series/
-│   ├── blink_detection/
-│   ├── closure_duration/
-│   ├── eye_state_tracking/
-│   │   └── eye_state_tracker.py
-│   └── perclos/
-│
 ├── drowsiness_detection/
 │   ├── drowsiness_logic/
 │   │   └── drowsiness_evaluator.py
