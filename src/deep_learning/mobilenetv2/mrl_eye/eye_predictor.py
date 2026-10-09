@@ -4,7 +4,12 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-from config import COLOR_GREEN_BGR, DEBUG, MOBILENETV2_IMG_HEIGHT, MOBILENETV2_IMG_WIDTH
+from src.config import (
+    COLOR_GREEN_BGR,
+    DEBUG,
+    MOBILENETV2_IMG_HEIGHT,
+    MOBILENETV2_IMG_WIDTH,
+)
 
 
 class EyePredictor:
@@ -13,10 +18,11 @@ class EyePredictor:
         """
         Initialize trained MobileNetV2 model.
         """
-        project_root = Path(__file__).resolve().parents[3]
+        project_root = Path(__file__).resolve().parents[4]
 
         model_path = (
             project_root
+            / "src"
             / "deep_learning"
             / "mobilenetv2"
             / "mrl_eye"
@@ -105,7 +111,7 @@ class EyePredictor:
             # cv2.imshow("Eye Input", eye)
             cv2.imwrite(
                 str(
-                    Path(__file__).resolve().parents[3]
+                    Path(__file__).resolve().parents[4]
                     / "results"
                     / "debug"
                     / "debug_eye.jpg"

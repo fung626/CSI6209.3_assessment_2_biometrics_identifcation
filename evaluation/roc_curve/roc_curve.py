@@ -1,13 +1,16 @@
 import json
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from sklearn.metrics import auc, roc_curve
 
-from config import MOBILENETV2_IMG_HEIGHT, MOBILENETV2_IMG_WIDTH
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.config import MOBILENETV2_IMG_HEIGHT, MOBILENETV2_IMG_WIDTH
+
 RESULTS_DIR = PROJECT_ROOT / "evaluation" / "results"
 
 """

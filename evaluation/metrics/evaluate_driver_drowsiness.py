@@ -7,6 +7,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 MODEL_PATH = (
     PROJECT_ROOT
+    / "src"
     / "deep_learning"
     / "mobilenetv2"
     / "driver_drowsiness"

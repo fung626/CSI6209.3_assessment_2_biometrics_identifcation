@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-from config import (
+from src.config import (
     COLOR_BROWN_RGB,
     COLOR_DARK_GRAY_RGB,
     COLOR_DARK_RED_RGB,
@@ -18,9 +18,9 @@ from config import (
     DEBUG,
 )
 
-# from utils.drawing_utils import draw_bold_text, draw_regular_text, draw_semibold_text
+# from src.utils.drawing_utils import draw_bold_text, draw_regular_text, draw_semibold_text
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 """
 The class for evaluating driver drowsiness based on face, eye, and yawn inputs.

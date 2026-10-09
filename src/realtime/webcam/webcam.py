@@ -1,27 +1,26 @@
 import sys
 from pathlib import Path
 
-from utils.drawing_utils import draw_live_badge, draw_timestamp_badge
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import cv2
 
-from computer_vision.eye.eye_detector import EyeDetector
-from computer_vision.facial_landmarks.facial_landmark_detector import (
+from src.computer_vision.eye_detection.eye_detector import EyeDetector
+from src.computer_vision.facial_landmarks.facial_landmark_detector import (
     FacialLandmarkDetector,
 )
-from deep_learning.mobilenetv2.driver_drowsiness.face_predictor import FacePredictor
-from deep_learning.mobilenetv2.mrl_eye.eye_predictor import EyePredictor
-from drowsiness_detection.drowsiness_logic.drowsiness_evaluator import (
+from src.deep_learning.mobilenetv2.driver_drowsiness.face_predictor import FacePredictor
+from src.deep_learning.mobilenetv2.mrl_eye.eye_predictor import EyePredictor
+from src.drowsiness_detection.drowsiness_logic.drowsiness_evaluator import (
     DrowsinessEvaluator,
 )
-from drowsiness_detection.eye_closure_detection.eye_closure_detector import (
+from src.drowsiness_detection.eye_closure_detection.eye_closure_detector import (
     EyeClosureDetector,
 )
-from drowsiness_detection.yawn_detection.yawn_detector import YawnDetector
-from realtime.alert_system.buzzer_alert import BuzzerAlert
+from src.drowsiness_detection.yawn_detection.yawn_detector import YawnDetector
+from src.realtime.alert_system.buzzer_alert import BuzzerAlert
+from src.utils.drawing_utils import draw_live_badge, draw_timestamp_badge
 
 
 def main():

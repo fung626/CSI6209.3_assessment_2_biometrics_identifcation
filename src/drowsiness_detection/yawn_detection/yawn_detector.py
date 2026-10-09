@@ -65,7 +65,6 @@ class YawnDetector:
 
         else:
             self.yawn_start_time = None
-
             # Handle latching cooldown so alerts don't flicker abruptly
             if current_time < self.alert_cooldown_until:
                 return True, 0.0, yawn_ratio

@@ -39,41 +39,55 @@ CSI6209.3_assessment_2_biometrics_identifcation/
 │           ├── awake/
 │           └── sleepy/
 │
-├── computer_vision/
-│   ├── eye_detection/
-│   │   └── eye_detector.py
-│   └── facial_landmarks/
-│       ├── facial_landmark_detector.py
-│       └── models/
-│           └── face_landmarker.task
+├── src/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   └── drawing_utils.py
+│   ├── computer_vision/
+│   │   ├── __init__.py
+│   │   ├── eye_detection/
+│   │   │   └── eye_detector.py
+│   │   └── facial_landmarks/
+│   │       ├── facial_landmark_detector.py
+│   │       └── models/
+│   │           └── face_landmarker.task
+│   │
+│   ├── deep_learning/
+│   │   ├── __init__.py
+│   │   ├── cnn/
+│   │   └── mobilenetv2/
+│   │       ├── mobilenetv2.py
+│   │       ├── driver_drowsiness/
+│   │       │   ├── train.py
+│   │       │   ├── face_predictor.py
+│   │       │   └── model/
+│   │       │       └── mobilenetv2_driver_drowsiness.keras
+│   │       └── mrl_eye/
+│   │           ├── eye_predictor.py
+│   │           ├── train.py
+│   │           └── model/
+│   │               └── mobilenetv2_mrl_eye.keras
+│   │
+│   ├── drowsiness_detection/
+│   │   ├── __init__.py
+│   │   ├── drowsiness_logic/
+│   │   │   └── drowsiness_evaluator.py
+│   │   ├── eye_closure_detection/
+│   │   │   └── eye_closure_detector.py
+│   │   └── yawn_detection/
+│   │       └── yawn_detector.py
+│   │
+│   └── realtime/
+│       ├── __init__.py
+│       ├── alert_system/
+│       │   └── buzzer_alert.py
+│       └── webcam/
+│           └── webcam.py
 │
-├── deep_learning/
-│   ├── cnn/
-│   └── mobilenetv2/
-│       ├── mobilenetv2.py
-│       ├── driver_drowsiness/
-│       │   ├── train.py
-│       │   └── model/
-│       │       └── mobilenetv2_driver_drowsiness.keras
-│       └── mrl_eye/
-│           ├── eye_predictor.py
-│           ├── train.py
-│           └── model/
-│               └── mobilenetv2_mrl_eye.keras
-│
-├── drowsiness_detection/
-│   ├── drowsiness_logic/
-│   │   └── drowsiness_evaluator.py
-│   └── eye_closure_detection/
-│   │   └── eye_closure_detector.py
-│   └── yawn_detection/
-│       └── yawn_detector.py
-│
-├── realtime/
-│   ├── alert_system/
-│   ├── buzzer_alert.py
-│   └── webcam/
-│       └── webcam.py
+├── results/
+│   └── debug/
 │
 ├── evaluation/
 │   ├── confusion_matrix/
@@ -103,7 +117,7 @@ CSI6209.3_assessment_2_biometrics_identifcation/
 │   └── PROJECT_STRUCTURE.md
 │
 ├── main.py
-├── config.py
+├── build.py
 ├── README.md
 ├── requirements.txt
 └── .venv/
@@ -120,7 +134,7 @@ CSI6209.3_assessment_2_biometrics_identifcation/
 
 - Handles data cleaning, image resizing, exploratory data analysis, and train/validation/test data partitioning scripts.
 
-#### C. Computer Vision (computer_vision/)
+#### C. Computer Vision (src/computer_vision/)
 
 - Facial Landmarks (facial_landmark_detector.py): Utilizes MediaPipe Face Landmarker to extract real-time facial mesh points, calculating Eye Aspect Ratio (EAR) and Mouth Aspect Ratio (MAR).
 
@@ -130,7 +144,7 @@ CSI6209.3_assessment_2_biometrics_identifcation/
 
 - Preserved in the repository for baseline architecture comparisons (includes SVM, Random Forest, and EAR feature extractors).
 
-#### E. Deep Learning (deep_learning/)
+#### E. Deep Learning (src/deep_learning/)
 
 - MobileNetV2 (MRL-Eye): Binary classification model trained on eye crops (mobilenetv2_mrl_eye.keras).
 
@@ -140,11 +154,11 @@ CSI6209.3_assessment_2_biometrics_identifcation/
 
 - Evaluates sliding window queues across recent frames to calculate PERCLOS (Percentage of Eye Closure), closure duration, and blink frequency, bridging single-frame predictions with sustained fatigue detection.
 
-#### G. Drowsiness Detection (drowsiness_detection/)
+#### G. Drowsiness Detection (src/drowsiness_detection/)
 
 - Drowsiness Logic (drowsiness_evaluator.py): Fuses deep learning MobileNetV2 confidence scores with geometric metrics (EAR/MAR). Features a Yawn Override where a high MAR percentage immediately flags a drowsy state to bypass static CNN misclassifications.
 
-#### H. Real-Time Processing (realtime/)
+#### H. Real-Time Processing (src/realtime/)
 
 - Webcam App (webcam.py): Runs the live video processing loop displaying face/mouth boundary indicators, telemetry overlays, and triggering asynchronous buzzer alerts with cooldown protection.
 
@@ -154,16 +168,16 @@ CSI6209.3_assessment_2_biometrics_identifcation/
 
 ## Key Script Reference
 
-| Script                                                        | Purpose                                                  |
-| ------------------------------------------------------------- | -------------------------------------------------------- |
-| main.py                                                       | Main application entry point                             |
-| realtime/webcam/webcam.py                                     | Real-time drowsiness detection from webcam feed          |
-| computer_vision/facial_landmarks/facial_landmark_detector.py  | Extracts MediaPipe landmarks, computes EAR and MAR       |
-| drowsiness_detection/drowsiness_logic/drowsiness_evaluator.py | Manages hybrid score fusion and hard geometric overrides |
-| evaluation/metrics/evaluate_driver_drowsiness.py              | Evaluates Driver Drowsiness model on test split          |
-| evaluation/metrics/evaluate_mrl_eye.py                        | Evaluates MRL Eye model on test split                    |
-| deep_learning/mobilenetv2/driver_drowsiness/train.py          | Training script for Driver Drowsiness MobileNetV2        |
-| deep_learning/mobilenetv2/mrl_eye/train.py                    | Training script for MRL Eye MobileNetV2                  |
+| Script                                                            | Purpose                                                  |
+| ----------------------------------------------------------------- | -------------------------------------------------------- |
+| main.py                                                           | Main application entry point                             |
+| src/realtime/webcam/webcam.py                                     | Real-time drowsiness detection from webcam feed          |
+| src/computer_vision/facial_landmarks/facial_landmark_detector.py  | Extracts MediaPipe landmarks, computes EAR and MAR       |
+| src/drowsiness_detection/drowsiness_logic/drowsiness_evaluator.py | Manages hybrid score fusion and hard geometric overrides |
+| evaluation/metrics/evaluate_driver_drowsiness.py                  | Evaluates Driver Drowsiness model on test split          |
+| evaluation/metrics/evaluate_mrl_eye.py                            | Evaluates MRL Eye model on test split                    |
+| src/deep_learning/mobilenetv2/driver_drowsiness/train.py          | Training script for Driver Drowsiness MobileNetV2        |
+| src/deep_learning/mobilenetv2/mrl_eye/train.py                    | Training script for MRL Eye MobileNetV2                  |
 
 ## 4. Model Performance Summary
 

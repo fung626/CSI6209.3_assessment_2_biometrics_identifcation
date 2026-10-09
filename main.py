@@ -8,8 +8,8 @@ import tensorflow as tf
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-# from config import MOBILENETV2_IMG_HEIGHT, MOBILENETV2_IMG_WIDTH
-from realtime.webcam.webcam import main as run_webcam
+# from src.config import MOBILENETV2_IMG_HEIGHT, MOBILENETV2_IMG_WIDTH
+from src.realtime.webcam.webcam import main as run_webcam
 
 
 def main():

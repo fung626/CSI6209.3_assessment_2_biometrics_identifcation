@@ -1,21 +1,22 @@
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
 sys.path.append(str(PROJECT_ROOT))
 
-from deep_learning.mobilenetv2.mobilenetv2 import MobileNetV2Trainer
+from src.deep_learning.mobilenetv2.mobilenetv2 import MobileNetV2Trainer
 
 """
 Train MobileNetV2 model for Driver Drowsiness dataset.
 """
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
 
 trainer = MobileNetV2Trainer(
     data_dir=PROJECT_ROOT / "data" / "Driver-Drowsiness-Dataset",
     model_path=(
         PROJECT_ROOT
+        / "src"
         / "deep_learning"
         / "mobilenetv2"
         / "driver_drowsiness"
@@ -23,11 +24,7 @@ trainer = MobileNetV2Trainer(
         / "mobilenetv2_driver_drowsiness.keras"
     ),
     results_dir=(
-        PROJECT_ROOT
-        / "results"
-        / "training_results"
-        / "mobilenetv2"
-        / "driver_drowsiness"
+        PROJECT_ROOT / "training_results" / "mobilenetv2" / "driver_drowsiness"
     ),
     epochs=10,
 )

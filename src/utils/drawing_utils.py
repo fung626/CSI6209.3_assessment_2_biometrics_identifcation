@@ -4,9 +4,9 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-from config import COLOR_DARK_CHARCOAL_RGB, COLOR_GRAY_RGB, COLOR_WHITE_RGB
+from src.config import COLOR_DARK_CHARCOAL_RGB, COLOR_GRAY_RGB, COLOR_WHITE_RGB
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 import datetime
 

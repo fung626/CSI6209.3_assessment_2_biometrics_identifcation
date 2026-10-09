@@ -4,7 +4,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-from config import COLOR_GREEN_BGR, COLOR_RED_BGR
+from src.config import COLOR_GREEN_BGR, COLOR_RED_BGR
 
 """
 FacialLandmarkDetector class for detecting and drawing facial landmarks using MediaPipe.
@@ -35,10 +35,11 @@ class FacialLandmarkDetector:
         """
         Initialize FacialLandmarkDetector for detecting facial landmarks using MediaPipe.
         """
-        project_root = Path(__file__).resolve().parents[2]
+        project_root = Path(__file__).resolve().parents[3]
 
         model_path = (
             project_root
+            / "src"
             / "computer_vision"
             / "facial_landmarks"
             / "models"
