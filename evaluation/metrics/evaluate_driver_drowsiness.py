@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from evaluator import evaluate_model
+from evaluator_hybrid import evaluate_hybrid_model
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -17,12 +18,23 @@ MODEL_PATH = (
 
 TEST_DIR = PROJECT_ROOT / "data" / "Driver-Drowsiness-Dataset" / "test"
 
-RESULT_PATH = PROJECT_ROOT / "evaluation" / "results" / "driver_drowsiness_results.json"
-
-results = evaluate_model(
+standalone_results = evaluate_model(
     model_path=MODEL_PATH,
     test_dir=TEST_DIR,
-    result_path=RESULT_PATH,
+    result_path=PROJECT_ROOT
+    / "evaluation"
+    / "results"
+    / "driver_drowsiness_results.json",
 )
 
-print(results)
+hybrid_results = evaluate_hybrid_model(
+    model_path=MODEL_PATH,
+    test_dir=TEST_DIR,
+    result_path=PROJECT_ROOT
+    / "evaluation"
+    / "results"
+    / "hybrid_driver_drowsiness_results.json",
+)
+
+print(standalone_results)
+print(hybrid_results)

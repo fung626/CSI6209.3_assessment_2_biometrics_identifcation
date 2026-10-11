@@ -1,0 +1,13 @@
+{
+    "model": "hybrid_mobilenetv2_ear_mar_live_session",
+    "session_summary": {
+        "total_valid_face_frames": 731,
+        "alert_frames": 419,
+        "drowsy_detected_frames": 312,
+        "cnn_trigger_count": 685,
+        "ear_trigger_count": 121,
+        "mar_trigger_count": 80,
+        "mean_ear": 0.2990945348812444,
+        "mean_mar": 0.45055868568431695
+    }
+}

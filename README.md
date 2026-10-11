@@ -98,7 +98,21 @@ Awake / Drowsy Status & Real-Time Alert
 
 ---
 
-# 4. Key Features & Pipeline Stages
+# 4. Prediction Formula
+
+#### Base Drowsiness Score Calculation
+
+**Default Hyperparameters:**
+
+- Face weight: 0.2
+- Eye weight: 0.8
+- Drowsiness threshold: 0.5
+- Yawn threshold: MAR > 0.5
+- EAR threshold (closed eyes): Varies by quality
+
+---
+
+# 5. Key Features & Pipeline Stages
 
 ### 1. Robust Feature Extraction: Computes real-time EAR and MAR from MediaPipe face landmarks with built-in safety checks for boundary conditions.
 
@@ -112,7 +126,7 @@ Awake / Drowsy Status & Real-Time Alert
 
 ---
 
-# 5. Expected System Output
+# 6. Expected System Output
 
 === DRIVER MONITORING ACTIVE ===
 
