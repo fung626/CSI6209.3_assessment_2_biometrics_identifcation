@@ -62,7 +62,7 @@ def main():
 
     print("Webcam started. Press Q to quit and export session results.")
 
-    evaluating_hybrid_model = True
+    evaluating_hybrid_model = False
     valid_face_frames = 0
     alert_frame_count = 0
     drowsy_frame_count = 0
@@ -128,10 +128,10 @@ def main():
                     face_predictor.extract_face(frame, face_box)
                 )
                 face_pred_val = safe_float(raw_face_pred)
-                print(f"Raw Face Prediction Value: {raw_face_pred}")
+                # print(f"Raw Face Prediction Value: {raw_face_pred}")
 
                 if face_pred_val >= 0.5:
-                    print("CNN Triggered")
+                    # print("CNN Triggered")
                     cnn_triggers += 1
 
                 left_pred, right_pred = None, None
