@@ -39,8 +39,8 @@ class BuzzerAlert:
             elif system == "Windows":  # Windows
                 import winsound
 
-                winsound.Beep(2500, 1000)  # 2500Hz for 1 second
+                winsound.Beep(2500, 1000)
             else:  # Linux / Ubuntu
-                print("\a")  # Terminal bell fallback
+                print("\a")
         except Exception as e:
             print(f"Audio alert failed to play: {e}")
